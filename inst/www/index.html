@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Length Estimator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<!-- Le styles -->
+<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+<link href="debug.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+	<div class="navbar navbar-fixed-top navbar-inverse">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="brand">Length Estimator</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="container" id="maincontainer">
+
+		<div class="row show-grid">
+			<div id="leftcolumn" class="span4">
+				<form id="paramform" class="well" target="outputframe">
+					<div style="position:relative;">
+						<a class='btn btn-primary' href='javascript:;'>
+							Load Picture...
+							<input type="file" accept="image/jpeg" style='position:absolute;z-index:2;top:0;left:0;filter: alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";opacity:0;background-color:transparent;color:transparent;' id="pic_source" name="pic_source" size="40" onchange='$("#upload-file-info").html($(this).val().split(/(\\|\/)/g).pop());'>
+						</a>
+						&nbsp;
+						<span id="upload-file-info"></span>
+					</div>
+					<br>
+					<fieldset>
+					
+						<legend>Data</legend>
+						<div class="row show-grid">
+							<div class="span1">
+								<div class="control-group">
+									<label class="control-label" for="levelsOfGray">Levels of gray</label>
+									<div class="controls">
+										<input type="number" class="input-small form-control span1 inputparam" id="levelsOfGray" value="20">
+									</div>
+								</div>
+							</div>
+							<div class="span1">
+								<div class="control-group">
+									<label class="control-label" for="boxSize"><br>Box size</label>
+									<div class="controls">
+										<input type="number" class="input-small form-control span1 inputparam" id="boxSize" value="10">
+									</div>
+								</div>
+							</div>
+							<div class="span1">
+								<div class="control-group">
+									<label class="control-label" for="thickness">Line thickness</label>
+									<div class="controls">
+										<input type="number" class="input-small form-control span1 inputparam" id="thickness" value="5">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div align="right">
+							<p><button id="submitajax_prepare" class="btn btn-success btn-large" disabled="disabled">
+								<i class="icon-retweet icon-white"></i> Prepare data
+							</button></p>
+						</div>
+						
+						<legend>Estimation</legend>
+						<div class="row show-grid">
+							<div class="span1">
+								<div class="control-group">
+									<label class="control-label" for="error"><br>Error distribution</label>
+									<div class="controls">
+										<select class="input-small" id="error">
+											<option value="laplace">Laplace</option>
+											<option value="gauss">Gauss</option>
+											<option value="student">Student</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="span1">
+								<div class="control-group">
+									<label class="control-label" for="var_dev">Error standard deviation</label>
+									<div class="controls">
+										<select class="input-small" id="var_dev">
+											<option value="ML" selected>ML estimator</option>
+											<option value="MM">MM estimator</option>
+											<option value="value">Enter value</option>
+										</select>
+										<input type="number" class="input-small form-control span1" id="err_deviation" value="0.95">
+									</div>
+								</div>
+							</div>
+							<div class="span1">
+								<div class="control-group">
+									<label class="control-label" for="conf_level"><br>Confidence level</label>
+									<div class="controls">
+										<input type="number" class="input-small form-control span1" id="conf_level" value="0.95" step="0.01" min="0" max="1">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div align="right">
+							<p><button id="submitajax_est" class="btn btn-success btn-large" disabled="disabled">
+								<i class="icon-retweet icon-white"></i> Estimate
+							</button></p>
+						</div>
+						
+						<legend>Testing</legend>
+						<div class="row show-grid">			  
+							<div class="span1">
+								<div class="control-group">
+									<label class="control-label" for="H0">H<sub>0</sub> value</label>
+									<div class="controls">
+										<input type="number" class="input-small form-control span1" id="H0" value="10" min="0" step="0.1">
+									</div>
+								</div>
+							</div>
+							<div class="span1">
+								<div class="control-group">
+									<label class="control-label" for="alternative">Alternative</label>
+									<div class="controls">
+										<select class="input-small" id="alternative">
+											<option value="t" selected>two-sided</option>
+											<option value="g">greater</option>
+											<option value="l">less</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div align="right">
+							<p><button id="submitajax_test" class="btn btn-success btn-large" disabled="disabled">
+								<i class="icon-retweet icon-white"></i> Test
+							</button></p>
+						</div>
+					
+					
+						<div align="right">
+							<p style="padding-top: 15px;"><button id="resetoutputbutton" style="margin-right: 10px;" type="button" class="btn btn-info btn-sm disabled"><i class="icon-remove icon-white"></i> Reset output</button>
+							<button id="resetbutton" type="button" class="btn btn-info btn-sm disabled"><i class="icon-remove icon-white"></i> Reset points</button></p>
+						</div>
+					</fieldset>
+				</form>
+
+				<div id="errordiv"></div>
+        
+  			<div class="alert alert-info">
+					<a class="close" data-dismiss="alert">&times;</a> <strong>Welcome!</strong>
+					Click on <strong>Load picture</strong> (must be black and white JPEG), choose start and end points, set data parameters and click on <strong>Prepare data</strong>. After that, you can perform <strong>length evaluation</strong> and <strong>hypothesis testing</strong>.
+				</div>
+			</div>
+
+			<div class="span8">
+				<div id="ajaxoutput">
+					<div class="well" id="picdiv"><img width="100%" id="picture" src="#" style="display: none;"/>
+						<div class="invisible" id="startpoint">Start point: <span id="coordx1"></span> x <span id="coordy1"></span></div>
+						<div class="invisible" id="endpoint">End point: <span id="coordx2"></span> x <span id="coordy2"></span></div>
+					</div>
+					<div class="well" id="status"><span class="tempoutput">Status: waiting...</span></div>
+					<pre id="data_plot"></pre>
+				</div>
+			</div>
+		</div>
+		<br>
+	</div>
+
+	<script src="jquery-1.10.2.min.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<script src="js/opencpu-0.5.js"></script>
+	<script src="debug.js"></script>
+	<script src="app.js"></script>
+  
+</body>
+</html>
