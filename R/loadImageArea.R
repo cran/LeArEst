@@ -69,10 +69,9 @@
 #'
 #' @export
 startweb.area <- function() {
-  if (is.null(opencpu::opencpu$pid)) {
-    opencpu::opencpu$start()
-  }
-  opencpu::opencpu$browse("library/LeArEst/www/index_area.html")
+  opencpu::ocpu_start_server(preload = "LeArEst", on_startup = function(server){
+    utils::browseURL(paste0(server, "/library/LeArEst/www/index_area.html"))
+  })
 }
 
 # Utility function for web interface call
@@ -534,7 +533,7 @@ areaest <- function(data,
     plot(xyDirect[, 1], xyDirect[, 2], type = 'l', col = 'cyan',
       xlab = "x", ylab = "y", lwd = 3, xlim = xLim, ylim = yLim)
     points(mydata)
-    points(ellipsePointsClean, col = "red", lwd = 3)
+    points(ellipsePointsClean, col = "red", lwd = 7)
   }
 
   return (list(

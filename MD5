@@ -1,9 +1,10 @@
-ecc1e7d537b1de26b1d021a9841db0ce *DESCRIPTION
+91698642ae13725d2b642a3e27a2270d *DESCRIPTION
 9176f7a23b27beab62c5da189ab36235 *NAMESPACE
+e768c5ce85771fc35d4d6d936a7b023a *NEWS.md
 905c9bbd6e4ddb9f1876a483c6e5f9a1 *R/lengthest.R
 a6962ab97ed106a3ca678b5e32583e35 *R/lengthtest.R
-40ccb6071e30c82c3d4234a7a876c194 *R/loadImage.R
-d12a676e0bd47ebc2742d6693979c617 *R/loadImageArea.R
+528766760ffd4e132db9585e8e6233aa *R/loadImage.R
+1e9b68b1caa7d04262a338a8ac7c4855 *R/loadImageArea.R
 6e5cd0e7a47b7563b96b1f0745998255 *R/util.R
 0125798b8419cfd1eac73854626d7e07 *inst/extdata/ellipse_3_4_0.1_gauss.txt
 642f940ad00e9cdcad650453005ce2dd *inst/extdata/ellipse_3_4_0.1_laplace.txt

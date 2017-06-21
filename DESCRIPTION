@@ -1,8 +1,8 @@
 Package: LeArEst
 Type: Package
 Title: Border and Area Estimation of Data Measured with Additive Error
-Version: 0.1.4
-Date: 2017-03-24
+Version: 0.1.5
+Date: 2017-06-21
 Authors@R: c(person("Mirta", "Bensic", role = "aut", 
                      email = "mirta@mathos.hr"),
              person("Safet", "Hamedovic", role = "aut", 
@@ -22,12 +22,12 @@ Description: Provides methods for estimating borders of uniform distribution on
 License: GPL-2
 LazyData: TRUE
 RoxygenNote: 6.0.1
-Imports: conicfit, graphics, jpeg, opencpu, stats, utils
+Imports: conicfit, graphics, jpeg, opencpu (>= 2.0.0), stats, utils
 NeedsCompilation: no
-Packaged: 2017-03-25 10:21:26 UTC; petar
+Packaged: 2017-06-21 08:34:00 UTC; petar
 Author: Mirta Bensic [aut],
   Safet Hamedovic [aut],
   Kristian Sabo [aut],
   Petar Taler [aut, cre]
 Repository: CRAN
-Date/Publication: 2017-03-25 16:14:40 UTC
+Date/Publication: 2017-06-21 13:00:34 UTC

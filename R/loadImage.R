@@ -82,12 +82,14 @@
 #'
 #' @export
 startweb.esttest <- function() {
-  if (is.null(opencpu::opencpu$pid)) {
-    opencpu::opencpu$start()
-  }
-  opencpu::opencpu$browse("library/LeArEst/www/index_esttest.html")
+  opencpu::ocpu_start_server(preload = "LeArEst", on_startup = function(server){
+    utils::browseURL(paste0(server, "/library/LeArEst/www/index_esttest.html"))
+  })
 }
 
+# Utility function for web interface call
+# Not intended for user calls!
+#
 #' @importFrom stats runif
 #' @importFrom graphics hist
 load.image <- function(generatedData = NULL, dataCenter = NULL, testType,
