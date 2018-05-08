@@ -48,7 +48,7 @@
 								<div class="control-group">
 									<label class="control-label" for="levelsOfGray">Levels of gray</label>
 									<div class="controls">
-										<input type="number" class="input-small form-control span1 inputparam" id="levelsOfGray" min="2" value="10">
+										<input type="number" class="input-small form-control span1 inputparam" id="levelsOfGray" min="2" max="255" value="10">
 									</div>
 								</div>
 							</div>
@@ -56,7 +56,7 @@
 								<div class="control-group">
 									<label class="control-label" for="boxSize"><br>Box size</label>
 									<div class="controls">
-										<input type="number" class="input-small form-control span1 inputparam" id="boxSize" value="20">
+										<input type="number" class="input-small form-control span1 inputparam" id="boxSize" min="2" max="200" value="20">
 									</div>
 								</div>
 							</div>
@@ -64,7 +64,7 @@
 								<div class="control-group">
 									<label class="control-label" for="thickness">Line thickness</label>
 									<div class="controls">
-										<input type="number" class="input-small form-control span1 inputparam" id="thickness" min="1" value="1">
+										<input type="number" class="input-small form-control span1 inputparam" id="thickness" min="1" max="100" value="1" disabled>
 									</div>
 								</div>
 							</div>
@@ -74,17 +74,45 @@
 								<div class="control-group">
 									<label class="control-label" for="nrSlices">Number of slices</label>
 									<div class="controls">
-										<input type="number" class="input-small form-control span1 inputparam" id="nrSlices" min="1" value="10">
+										<input type="number" class="input-small form-control span1 inputparam" id="nrSlices" min="1" max="200" value="10">
+									</div>
+								</div>
+							</div>
+							<div class="span1">
+								<div class="control-group">
+									<label class="control-label" for="slicing"><br>Slicing</label>
+									<div class="controls">
+										<select id="slicing" class="input-small"><option value="hv">Hor+Vert</option><option value="star">Star</option></select>
+									</div>
+								</div>
+							</div>
+							<div class="span1">
+								<div class="control-group">
+									<label class="control-label" for="parallel"><br>Parallelization</label>
+									<div class="controls">
+										<select id="parallel" class="input-small"><option value="0">Off</option><option value="1">On</option></select>
 									</div>
 								</div>
 							</div>
 						</div>
+						
 						<div class="row show-grid">
-							<div class="span3">
+							<div class="span1">
 								<div class="control-group">
-									<p>Observed object is <select id="data_bright" class="input-small"><option value="bright">bright</option><option value="dark">dark</option></select>
+									<label class="control-label" for="data_bright">Object brightness</label>
+									<div class="controls">
+										<select id="data_bright" class="input-small"><option value="bright">bright</option><option value="dark">dark</option></select>
+									</div>
 								</div>
 							</div>
+							<div class="span1">
+								<div class="control-group">
+									<label class="control-label" for="representation">Represent object as</label>
+									<div class="controls">
+										<select id="representation" class="input-small"><option value="ellipse">ellipse</option><option value="circle">circle</option></select>
+									</div>
+								</div>
+							</div>							
 						</div>						
 						
 						<legend>Estimation</legend>
@@ -147,8 +175,8 @@
 						<canvas id="canvas_fg" style="position: absolute; z-index: 11;"></canvas>
 						<img width="100%" id="picture" style="display: none;" src="#" />
 						
-						<div class="invisible" id="startpoint">Start point: <span id="coordx1"></span> x <span id="coordy1"></span></div>
-						<div class="invisible" id="endpoint">End point: <span id="coordx2"></span> x <span id="coordy2"></span></div>
+						<div class="invisible" id="startpoint">Start point: (<span id="coordy1"></span>, <span id="coordx1"></span>)</div>
+						<div class="invisible" id="endpoint">End point: (<span id="coordy2"></span>, <span id="coordx2"></span>)</div>
 					</div>
 					<div class="well" id="status"><span class="tempoutput">Status: waiting...</span></div>
 					

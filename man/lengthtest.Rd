@@ -6,7 +6,7 @@
 \usage{
 lengthtest(x, error = c("laplace", "gauss", "student"),
   alternative = c("two.sided", "greater", "less"), var = NULL,
-  null.a = NULL, var.est = c("ML", "MM"), conf.level = 0.95)
+  null.a = NULL, var.est = c("MM", "ML"), conf.level = 0.95)
 }
 \arguments{
 \item{x}{Vector of input data}

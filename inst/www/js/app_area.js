@@ -27,6 +27,14 @@ $(document).ready(function(){
 			$("#err_deviation").hide();
 	});
 	
+	$("#slicing").change(function(){
+		if ($(this).val() == "star") {
+			$("#thickness").prop("disabled", false);
+		} else {
+			$("#thickness").prop("disabled", true);
+		}
+	});
+	
 	/*$(".inputparam").change(function(){
 		if (!$("#endpoint").hasClass("invisible")) {
 			$("#submitajax_est").prop("disabled", true);
@@ -92,6 +100,7 @@ $(document).ready(function(){
 		var req = ocpu.call("load.image.area", {
 			picture : $("#pic_source")[0].files[0],
 			dataBright : $("#data_bright").val(),
+			representation : $("#representation").val(),
 			error : $("#error").val(),
 			var : Math.pow($("#err_deviation").val(), 2),
 			varEst : $("#var_dev").val(),
@@ -100,6 +109,8 @@ $(document).ready(function(){
 			boxSize : $("#boxSize").val(),
 			thickness : $("#thickness").val(),
 			nrSlices : $("#nrSlices").val(),
+			slicing : $("#slicing").val(),
+			parallel : $("#parallel").val(),
 			// x and y switched because of R's coordinate system!!!
 			startX : $("#coordy1").text(),
 			startY : $("#coordx1").text(),

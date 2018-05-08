@@ -21,13 +21,15 @@ is as follows:
  }
 }
 \details{
-The area estimation algorithm takes many horizontal and vertical
-slices of the object. Length estimation procedure is conducted on each slice
-and in that way set of edge points is obtained. Lastly, ellipse is fitted on
-that set of points by function \code{\link[conicfit]{EllipseDirectFit}} from
-the package \code{conicfit} and area of that ellipse is returned as the
-result. The area is measured in pixels, as well as percentage of the whole
-image.
+The area estimation algorithm takes many horizontal and vertical (if
+"horizontal + vertical" slicing is selected) or star-shaped (if "star"
+slicing is selected) slices of the object. Length estimation procedure is
+conducted on each slice and in that way set of edge points is obtained.
+Lastly, ellipse or circle is fitted on that set of points by function
+\code{\link[conicfit]{EllipseDirectFit}} or
+\code{\link[conicfit]{CircleFitByPratt}} from the package \code{conicfit}
+and area of that ellipse or circle is returned as the result. The area is
+measured in pixels, as well as percentage of the whole image.
 
 Parameters that can be set on the web page are as follows:
 
@@ -42,14 +44,20 @@ Parameters that can be set on the web page are as follows:
      estimation is done on the set of the resulting matrices.}
    \item{Line thickness}{Width of the slice, i.e. the maximum length between
      surrounding pixel and the drawn line so that pixel is to be taken into
-     account for length estimation. All surrounding pixels are orthogonaly
+     account for length estimation. All surrounding pixels are orthogonally
      projected on the central line.}
    \item{Number of slices}{Number of slices after cutting in one direction.
      Defaults to 10. Slices are equally thick in both directions. Smaller
      number of cuts will be automatically applied for smaller dimension if
      the chosen rectangle is not a square.}
-   \item{Observed object is...}{Sets whether observed object is bright or
+   \item{Slicing}{Sets slicing method for the edge point estimation. Can be
+     "horizontal + vertical" or "star".}
+   \item{Parallelization}{Sets whether to distribute area estimation on
+     multiple CPU cores. If set to On, total number of cores - 1 are used.}
+   \item{Object brightness}{Sets whether observed object is bright or
      dark.}
+   \item{Represent object as}{Represent estimated object as an ellipse or as
+     a circle.}
  }
  \strong{Estimation parameters}
  \describe{

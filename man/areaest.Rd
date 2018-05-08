@@ -5,7 +5,8 @@
 \title{Performs area estimation of the numerically described object in plane.}
 \usage{
 areaest(data, nrSlices = 10, error = c("laplace", "gauss", "student"),
-  var.est = c("MM", "ML"), var = NULL, plot = FALSE)
+  var.est = c("MM", "ML"), var = NULL, plot = FALSE, parallel = FALSE,
+  slicing = c("hv", "star"), representation = c("ellipse", "circle"))
 }
 \arguments{
 \item{data}{Two-column data matrix containing the points that describe
@@ -28,37 +29,53 @@ not given.}
 \item{plot}{Logical parameter (TRUE or FALSE) that determines whether to
 plot given object, calculated edge points and the resulting ellipse.
 Defaults to FALSE.}
+
+\item{parallel}{Logical parameter (TRUE or FALSE) that determines whether to
+perform estimation procedure in a parallel manner. Can shorten
+estimation time if many border points need to be calculated. Defaults to
+FALSE.}
+
+\item{slicing}{A character string specifying the method of slicing. Can be
+"hv" (horizontal and vertical slicing) or "star" (star-shaped slicing). Can
+ be abbreviated.}
+
+\item{representation}{A character string specifying the shape of an observed
+object. Can be "ellipse" or "circle". Can be abbreviated.}
 }
 \value{
 List containing:
   \itemize{
     \item area: Estimated area of the object,
     \item points: Set of calculated object's edge points,
-    \item semiaxes: Resulting ellipse's semi-axes.
+    \item semiaxes: Resulting ellipse's semi-axes or circle radius.
   }
 }
 \description{
 Use this function if you have a data set of uniformly distributed points on
 an elliptical domain in the plane but captured with additive errors. The
-estimation algorithm takes many horizontal and vertical slices of the object.
-Length estimation procedure is conducted on each slice and in that way the
-set of edge points is obtained. An ellipse is fitted to these edge points by
-function \code{\link[conicfit]{EllipseDirectFit}} from the package
-\code{conicfit} and its semi-axes and area are returned as a result.
-Function optionally plots input points, calculated edge points and the
-resulting ellipse.
+estimation algorithm takes many horizontal and vertical, or star-shaped
+slices of the object. Length estimation procedure is conducted on each slice
+and in that way the set of edge points is obtained. An ellipse or a circle
+is fitted to these edge points by function
+\code{\link[conicfit]{EllipseDirectFit}} or
+\code{\link[conicfit]{CircleFitByPratt}} from the package \code{conicfit}
+and its semi-axes and area are returned as a result. Function optionally
+plots input points, calculated edge points and the resulting ellipse or
+circle.
 }
 \examples{
 # load a data set representing the ellipse with additive Gaussian error,
 # run area estimation on it, and plot the results
 inputfile <- system.file("extdata", "ellipse_3_4_0.1_gauss.txt", package = "LeArEst")
 inputdata <- read.table(inputfile)
-area <- areaest(inputdata, error = "gauss", var.est = "ML", plot = TRUE)
+area <- areaest(inputdata, error = "gauss", var.est = "ML", plot = TRUE,
+                slicing = "hv", representation = "ellipse")
 
 # load a data set representing the ellipse with additive Laplacian error,
 # run area estimation on it, and plot the results
 inputfile <- system.file("extdata", "ellipse_3_4_0.1_laplace.txt", package = "LeArEst")
 inputdata <- read.table(inputfile)
-area <- areaest(inputdata, error = "laplace", var = 0.1, nrSlices = 5, plot = TRUE)
+area <- areaest(inputdata, error = "laplace", var = 0.1, nrSlices = 5, plot = TRUE,
+                slicing = "star", representation = "ellipse")
 
 }

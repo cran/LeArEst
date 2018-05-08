@@ -76,7 +76,7 @@ $(document).ready(function(){
 	});
 	
 	$("#resetoutputbutton").click(function(){
-		$("#status").html("<span class='tempoutput'>Status: waiting...</span>");
+		$("#status").html("<span class='tempoutput'>Status: waiting....</span>");
 		$("#data_plot").empty();
 	});
 		
@@ -152,7 +152,7 @@ $(document).ready(function(){
 			
 			session = session.getKey();
 			$(".tempoutput").remove();
-			//$("#status").prepend("<br><a target='_blank' href='/ocpu/tmp/"+ session +"/console'>Click for raw R output</a><br>")
+			$("#status").prepend("<br><a target='_blank' href='/ocpu/tmp/"+ session +"/console'>Click for raw R output</a><br>")
 			
 			if (testtype == "prepare") {
 				$("#data_plot").html("<img src='/ocpu/tmp/"+ session +"/graphics/last/png'>");

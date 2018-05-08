@@ -58,7 +58,7 @@ lengthtest <- function(x,
                        alternative = c("two.sided", "greater", "less"),
                        var = NULL,
                        null.a = NULL,
-                       var.est = c("ML","MM"),
+                       var.est = c("MM", "ML"),
                        conf.level = 0.95) {
   error <- match.arg(error)
   alt <- match.arg(alternative)

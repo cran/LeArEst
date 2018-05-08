@@ -45,13 +45,14 @@
 lengthest <- function(x,
                       error = c("laplace", "gauss", "student"),
                       var = NULL,
-                      var.est = c("MM", "ML"),  #-- Safet origigi
+                      var.est = c("MM", "ML"), # -- Safet origigi
                       conf.level = 0.95) {
   cl <- conf.level
   c1 <- list(fnscale = -1)
   m2 <- mean(x^2)
   m4 <- mean(x^4)
   error <- match.arg(error)
+  var.est <- match.arg(var.est)
 
   n <- length(x)
 
@@ -61,14 +62,17 @@ lengthest <- function(x,
 
   options(warn = -1)
 
+  nullvar_ml <- is.null(var) & var.est == "ML"
+  nullvar_mm <- is.null(var) & var.est == "MM"
+
   if (error == "laplace") {
-    if (is.null(var) & var.est == "ML") {
+    if (nullvar_ml) {
       start = c(max(abs(x)),sd(x))
       as.ml = optim(start, llik.l2, x = x, control = c1)[[1]]
       a.ml <- as.ml[1]
       l <- as.ml[2]
     } else {
-      if (is.null(var) & var.est == "MM") {
+      if (nullvar_mm) {
         l <- 1/sqrt(6)*sqrt(-2*m2 + sqrt(5*(m4 - m2^2)))
         # l<-sqrt(-1)
         if (is.na(l)) {
@@ -102,13 +106,13 @@ lengthest <- function(x,
     }
     v <- 2*l^2
     } else if (error == "gauss") {
-      if (is.null(var) & var.est == "ML") {
+      if (nullvar_ml) {
         start = c(max(abs(x)),sd(x))
         as.ml = optim(start, llik.n2, x = x, control = c1)[[1]]
         a.ml <- as.ml[1]
         s <- as.ml[2]
       } else {
-        if (is.null(var) & var.est == "MM") {
+        if (nullvar_mm) {
           s <- sqrt(mean(x^2)-sqrt(5/6*(3*(mean(x^2))^2-mean(x^4))))
           if (is.na(s)) {
             stop("MM estimate of error variance doesn't exist.
@@ -140,13 +144,13 @@ lengthest <- function(x,
       }
       v <- s^2
       } else {
-        if (is.null(var) & var.est == "ML") {
+        if (nullvar_ml) {
           start = c(max(abs(x)),sd(x))
           as.ml = optim(start, llik.s2, x = x, control = c1)[[1]]
           a.ml <- as.ml[1]
           s <- as.ml[2]
         } else {
-          if (is.null(var) & var.est == "MM") {
+          if (nullvar_mm) {
             s <- 1/(2*sqrt(5))*sqrt(-3*m2 + sqrt(15*(2*m4 - 3*m2^2)))
             if (is.na(s)) {
               stop("MM estimate of error variance doesn't exist.
