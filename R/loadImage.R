@@ -40,7 +40,7 @@
 #'  \strong{Estimation parameters}
 #'  \describe{
 #'    \item{Error distribution}{The type of the error distribution. Can be
-#'      Gauss, Laplace or Student.}
+#'      Gauss, Laplace, T1, T2, T3, T4 or T5 (Student).}
 #'    \item{Error standard deviation}{Estimation method for the error
 #'      standard deviation. Can be Maximum Likelihood (ML) or the Method of
 #'      Moments. If one does not want to estimate the deviation but to
@@ -167,11 +167,21 @@ load.image <- function(generatedData = NULL, dataCenter = NULL, testType,
   if (endPoint[2] > width - thickness/2)
     endPoint[2] <- width - ceiling(thickness/2)
 
+  greenLineLength <- sqrt((endPoint[1] - startPoint[1])^2 +
+                          (endPoint[2] - startPoint[2])^2)
+
   # the angle between the line and the abscissa.
   fiLine <- atan((endPoint[2] - startPoint[2])/(endPoint[1] - startPoint[1]))
 
   # if 'Prepare Data' is clicked, calculate the vector 'data' and 'dataCenter'
   if (testType == "prepare") {
+    # begin cackam 14. 3. 2019.
+    minBrightness <- min( img[startPoint[1]:endPoint[1], startPoint[2]:endPoint[2]] )
+    maxBrightness <- max( img[startPoint[1]:endPoint[1], startPoint[2]:endPoint[2]] )
+    img <- levelsOfGray * (img - minBrightness) / (maxBrightness - minBrightness)
+    img[img<0] <- 0
+    # end cackam 14. 3. 2019.
+
     dataMatrix = matrix(FALSE, nrow = height * boxSize, ncol = width * boxSize)
 
     for (j in 1:width) {
@@ -239,10 +249,10 @@ load.image <- function(generatedData = NULL, dataCenter = NULL, testType,
 
   } else if (testType == "est") {
     if (varEst == "value") {
-      estResult <- lengthest(data, error = error, var = var,
+      estResult <- lengthest(data, error = error, sd = sqrt(var),
         conf.level = conf.level)
     } else {
-      estResult <- lengthest(data, error = error, var.est = varEst,
+      estResult <- lengthest(data, error = error, sd.est = varEst,
         conf.level = conf.level)
     }
 
@@ -267,9 +277,11 @@ load.image <- function(generatedData = NULL, dataCenter = NULL, testType,
       ", Line thickness: ", thickness, "<br>Error distribution: ", error,
       ", Error standard deviation: ", varEst, ", Confidence level: ", confLevel,
       "<br><br><strong>Length</strong>: ", round(2 * estResult$radius, 2),
-      " pixel width (", round(percLength, 2), "% of the image width)",
+      " pixel width (", round(percLength, 2), "% of the image width); ",
+      "<strong>Green line length</strong>: ", round(greenLineLength, 2),
+      " pixel width",
       "<br><strong>Standard deviation</strong>: ",
-      round(sqrt(estResult$var.error), 2), varianceCalcd,
+      round(estResult$sd.error, 2), varianceCalcd,
       "<br><strong>Method</strong>: ", estResult$method,
       "<br><strong>Confidence interval</strong>: ("
       , round(2 * estResult$conf.int[1], 2), ", ",
@@ -281,12 +293,10 @@ load.image <- function(generatedData = NULL, dataCenter = NULL, testType,
   } else if (testType == "test") {
     if (varEst == "value") {
       estResult <- lengthtest(x = data, error = error, alternative = alt,
-        var = var, null.a = null.a/2,
-        conf.level = conf.level)
+        sd = sqrt(var), null.a = null.a/2, conf.level = conf.level)
     } else {
       estResult <- lengthtest(x = data, error = error, alternative = alt,
-        null.a = null.a/2, var.est = varEst,
-        conf.level = conf.level)
+        null.a = null.a/2, sd.est = varEst, conf.level = conf.level)
     }
 
     centerPoint <- c(startPoint[1] + cos(fiLine) * dataCenter/boxSize,
@@ -311,13 +321,15 @@ load.image <- function(generatedData = NULL, dataCenter = NULL, testType,
       ", Error standard deviation: ", varEst, ", Confidence level: ", confLevel,
       "<br><br><strong>Estimated length</strong>: ",
       round(2 * estResult$radius, 2),
-      " pixel width (", round(percLength, 2), "% of the image width)",
+      " pixel width (", round(percLength, 2), "% of the image width); ",
+      "<strong>Green line length</strong>: ", round(greenLineLength, 2),
+      " pixel width",
       "<br><strong>p value</strong>: ", round(estResult$p.value, 4),
       "<br><strong>Alternative</strong>: ", estResult$alternative,
       "<br><strong>T</strong>: ", round(estResult$tstat, 4),
       "<br><strong>Method</strong>: ", estResult$method,
       "<br><strong>Standard deviation</strong>: ",
-      round(sqrt(estResult$var.error), 2), varianceCalcd, sep = "")
+      round(estResult$sd.error, 2), varianceCalcd, sep = "")
 
     if (estResult$alternative == "two.sided") {
       output <- paste(output, "<br><strong>Confidence interval</strong>: (",

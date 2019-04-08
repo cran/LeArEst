@@ -1,3 +1,9 @@
+# LeArEst 1.0.0
+
+* improved algorithm for length and area estimation
+* replaced all occurrences of "variance" to "standard deviation" through the whole package
+* added support for Student error distribution (T1,..., T5)
+
 # LeArEst 0.2.0
 
 * added support for multithreaded calculation of area

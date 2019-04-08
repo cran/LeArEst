@@ -5,8 +5,9 @@
 \title{Performs area estimation of the numerically described object in plane.}
 \usage{
 areaest(data, nrSlices = 10, error = c("laplace", "gauss", "student"),
-  var.est = c("MM", "ML"), var = NULL, plot = FALSE, parallel = FALSE,
-  slicing = c("hv", "star"), representation = c("ellipse", "circle"))
+  var.est = c("MM", "ML"), var = NULL, plot = FALSE,
+  parallel = FALSE, slicing = c("hv", "star"),
+  representation = c("ellipse", "circle"))
 }
 \arguments{
 \item{data}{Two-column data matrix containing the points that describe

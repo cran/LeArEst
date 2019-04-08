@@ -3,19 +3,20 @@
 #' Function \code{lengthtest()} tests the hypothesized uniform domain width
 #' against two-sided or one-sided alternatives from data contaminated with
 #' additive error. The additive error can be chosen as Laplace, Gauss or
-#' scaled Student distribution with 5 degrees of freedom.
+#' scaled Student distribution with 1 - 5 degrees of freedom.
 #'
 #' @param x Vector of input data
 #' @param error A character string specifying the error distribution. Must be
-#'   one of "laplace", "gauss" or "student". Can be abbreviated.
+#'   one of "laplace", "gauss", "t1", "t2", "t3", "t4", "t5". Can be
+#'   abbreviated.
 #' @param alternative A character string specifying the alternative hypothesis,
 #'   must be one of "two.sided", "greater" or "less". Can be abbreviated.
-#' @param var Explicit error variance. Needs to be given if \code{var.est} is
-#'   not given.
+#' @param sd Explicit error standard deviation. Needs to be given if
+#'   \code{var.sd} is not given.
 #' @param null.a Specified null value being tested.
-#' @param var.est A character string specifying the method of error variance
-#'   estimation. Must be given if \code{var} is not given. Can be "MM" (Method
-#'   of Moments) or "ML" (Maximum Likelihood).
+#' @param sd.est A character string specifying the method of error standard
+#'   deviation estimation. Must be given if \code{sd} is not given. Can be "MM"
+#'   (Method of Moments) or "ML" (Maximum Likelihood).
 #' @param conf.level Confidence level of the confidence interval.
 #'
 #' @return List containing:
@@ -23,7 +24,7 @@
 #'     \item error.type: A character string describing the type of the
 #'       error distribution,
 #'     \item radius: Estimated half-width of uniform distribution,
-#'     \item var.error: Error variance, estimated or given,
+#'     \item sd.error: Error standard deviation, estimated or given,
 #'     \item conf.level: Confidence level of the confidence interval,
 #'     \item alternative: A character string describing the
 #'       alternative hypothesis,
@@ -42,7 +43,7 @@
 #' sample_2 <- rnorm(1000, 0, 0.1)
 #' sample <- sample_1 + sample_2
 #' out <- lengthtest(x = sample, error = "gauss", alternative = "greater",
-#'                   var.est = "MM", null.a = 0.997, conf.level = 0.95)
+#'                   sd.est = "MM", null.a = 0.997, conf.level = 0.95)
 #'
 #' @importFrom stats sd
 #' @importFrom stats optim
@@ -54,20 +55,30 @@
 #'
 #' @export
 lengthtest <- function(x,
-                       error = c("laplace", "gauss", "student"),
+                       error = c("laplace", "gauss",
+                                 "t1", "t2", "t3", "t4", "t5"),
                        alternative = c("two.sided", "greater", "less"),
-                       var = NULL,
+                       sd = NULL,
                        null.a = NULL,
-                       var.est = c("MM", "ML"),
+                       sd.est = c("MM", "ML"),
                        conf.level = 0.95) {
   error <- match.arg(error)
   alt <- match.arg(alternative)
-  var.est <- match.arg(var.est)
+  sd.est <- match.arg(sd.est)
 
   cl <- conf.level
   c1 <- list(fnscale = -1)
   m2 <- mean(x^2)
   m4 <- mean(x^4)
+
+  if (!is.null(sd)) {
+    var <- sd^2
+  } else {
+    var <- NULL
+  }
+  if (exists("sd.est")) {
+    var.est <- sd.est
+  }
 
   n <- length(x)
 
@@ -263,11 +274,11 @@ lengthtest <- function(x,
     v <- s^2 * 5 / 3
   }
   if (!is.null(var)) {
-    names(v) <- "known error variance:"
+    names(v) <- "known error standard deviation:"
   } else if (var.est == "ML") {
-    names(v) <- "ML estimate for error variance:"
+    names(v) <- "ML estimate for error standard deviation:"
   } else
-    names(v) <- "MM estimate for error variance:"
+    names(v) <- "MM estimate for error standard deviation:"
   if (method == "ADLR") {
     method <- "Asymptotic distribution of LR statistic"
   } else
@@ -276,7 +287,7 @@ lengthtest <- function(x,
 
   out <- list(error.type = error,
     radius = a.ml,
-    var.error = v,
+    sd.error = sqrt(v),
     conf.level = cl,
     alternative = alt,
     method = method,

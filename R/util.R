@@ -102,3 +102,27 @@ fun.cis <- function(a, ml, x, s, cl) {
 int.s <- function(x, alfa) {
   (dt(x + alfa, 5) + dt(x - alfa, 5))^2/(pt(x + alfa, 5) - pt(x - alfa, 5))
 }
+
+# Log-likelihood (scaled Student error with df = 4, 3, 2, 1)
+llik.st = function(a, s, df, x) {
+  n <- length(x)
+  return(-n * log(2*a) + sum(log(pt((x + a) / s, df) - pt((x - a)/s, df))))
+}
+
+llik.st2 = function(t, df, x) {
+  n <- length(x)
+  a <- t[1]
+  s <- t[2]
+  return(-n * log(2 * a) + sum(log(pt((x + a) / s, df) - pt((x - a) / s, df))))
+}
+
+## Funkcija za odredjivanje intervala povjerenja (Student error, 4, 3, 2, 1)
+fun.cist <- function(a, ml, x, s, df, cl) {
+  -llik.st(a, s, df, x) + llik.st(ml, s, df, x) - 0.5 * qchisq(cl, 1)
+}
+
+## podintegralna f-ja iz as. var
+int.st <- function(x, df, alfa) {
+  (dt(x + alfa, df) + dt(x - alfa, df))^2 / (pt(x + alfa, df) -
+                                             pt(x - alfa, df))
+}

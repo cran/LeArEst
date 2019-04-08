@@ -4,21 +4,22 @@
 \alias{lengthest}
 \title{Performs width estimation for a numerical data set.}
 \usage{
-lengthest(x, error = c("laplace", "gauss", "student"), var = NULL,
-  var.est = c("MM", "ML"), conf.level = 0.95)
+lengthest(x, error = c("laplace", "gauss", "t1", "t2", "t3", "t4", "t5"),
+  sd = NULL, sd.est = c("MM", "ML"), conf.level = 0.95)
 }
 \arguments{
 \item{x}{Vector of input data.}
 
 \item{error}{A character string specifying the error distribution. Must be
-one of "laplace", "gauss" or "student". Can be abbreviated.}
+one of "laplace", "gauss", "t1", "t2", "t3", "t4", "t5". Can be
+abbreviated.}
 
-\item{var}{Explicit error variance. Needs to be given if \code{var.est} is
-not given.}
+\item{sd}{Explicit error standard deviation. Needs to be given if
+\code{sd.est} is not given.}
 
-\item{var.est}{A character string specifying the method of error variance
-estimation. Must be given if \code{var} is not given. Can be "MM" (Method
-of Moments) or "ML" (Maximum Likelihood).}
+\item{sd.est}{A character string specifying the method of error standard
+deviation estimation. Must be given if \code{sd} is not given. Can be
+"MM" (Method of Moments) or "ML" (Maximum Likelihood).}
 
 \item{conf.level}{Confidence level of the confidence interval.}
 }
@@ -28,7 +29,7 @@ List containing:
     \item error.type: A character string describing the type of the
       error distribution.
     \item radius: Estimated half-width of uniform distribution.
-    \item var.error: Error variance, estimated or given.
+    \item sd.error: Error standard deviation, estimated or given.
     \item conf.level: Confidence level of the confidence interval.
     \item method: A character string indicating what method for
       computing a confidence interval was used (asymptotic distribution of
@@ -40,13 +41,13 @@ List containing:
 Function \code{lengthest()} computes the length of an interval which is the
 domain of uniform distribution from data contaminated with additive error.
 The additive error can be chosen as Laplace, Gauss or scaled Student
-distribution with 5 degrees of freedom.
+distribution with 1 - 5 degrees of freedom.
 }
 \examples{
 # generate uniform data with additive error and run a length estimation on it
 sample_1 <- runif(1000, -1, 1)
 sample_2 <- rnorm(1000, 0, 0.1)
 sample <- sample_1 + sample_2
-out <- lengthest(x = sample, error = "gauss", var.est = "MM", conf.level = 0.90)
+out <- lengthest(x = sample, error = "gauss", sd.est = "MM", conf.level = 0.90)
 
 }

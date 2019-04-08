@@ -54,7 +54,7 @@
 #'  \strong{Estimation parameters}
 #'  \describe{
 #'    \item{Error distribution}{Type of the error distribution. Can be Gauss,
-#'      Laplace or Student.}
+#'      Laplace, T1, T2, T3, T4 or T5 (Student).}
 #'    \item{Error standard deviation}{Estimation method for the error
 #'      standard deviation. Can be Maximum Likelihood (ML) or the Method of
 #'      Moments. If one does not want to estimate the deviation but to
@@ -89,7 +89,7 @@ startweb.area <- function() {
 #' @importFrom stats kmeans
 load.image.area <- function(picture, dataBright = "bright", representation,
   error, var, varEst, confLevel, levelsOfGray, boxSize, thickness, parallel,
-  slicing, nrSlices, startX, startY, endX, endY) {
+  slicing, nrSlices, startX, startY, endX, endY, verbose = TRUE) {
   # 0 < intensity < levelsOfGray-1 must apply: boxSize^2 >= levelsOfGray-1 !!!
 
   var <- as.numeric(var)
@@ -148,6 +148,13 @@ load.image.area <- function(picture, dataBright = "bright", representation,
     endPoint[1] <- height - ceiling(thickness/2)
   if (endPoint[2] > width - thickness/2)
     endPoint[2] <- width - ceiling(thickness/2)
+
+  # begin contrast optimization
+  minBrightness <- min( img[startPoint[1]:endPoint[1], startPoint[2]:endPoint[2]] )
+  maxBrightness <- max( img[startPoint[1]:endPoint[1], startPoint[2]:endPoint[2]] )
+  img <- levelsOfGray * (img - minBrightness) / (maxBrightness - minBrightness)
+  img[img<0] <- 0
+  # end contrast optimization
 
   # prepare dataMatrix for the whole image
   dataMatrix = matrix(FALSE, nrow = height * boxSize, ncol = width * boxSize)
@@ -270,10 +277,10 @@ load.image.area <- function(picture, dataBright = "bright", representation,
         data <- (data - dataCenter) / boxSize
 
         if (varEst == "value") {
-          estResult <- lengthest(data, error = error, var = var,
+          estResult <- lengthest(data, error = error, sd = sqrt(var),
             conf.level = conf.level)
         } else {
-          estResult <- lengthest(data, error = error, var.est = varEst,
+          estResult <- lengthest(data, error = error, sd.est = varEst,
             conf.level = conf.level)
         }
 
@@ -315,10 +322,10 @@ load.image.area <- function(picture, dataBright = "bright", representation,
         data <- (data - dataCenter) / boxSize
 
         if (varEst == "value") {
-          estResult <- lengthest(data, error = error, var = var,
+          estResult <- lengthest(data, error = error, sd = sqrt(var),
             conf.level = conf.level)
         } else {
-          estResult <- lengthest(data, error = error, var.est = varEst,
+          estResult <- lengthest(data, error = error, sd.est = varEst,
             conf.level = conf.level)
         }
 
@@ -366,10 +373,10 @@ load.image.area <- function(picture, dataBright = "bright", representation,
         data <- (data - dataCenter) / boxSize
 
         if (varEst == "value") {
-          estResult <- lengthest(data, error = error, var = var,
+          estResult <- lengthest(data, error = error, sd = sqrt(var),
             conf.level = conf.level)
         } else {
-          estResult <- lengthest(data, error = error, var.est = varEst,
+          estResult <- lengthest(data, error = error, sd.est = varEst,
             conf.level = conf.level)
         }
 
@@ -410,10 +417,10 @@ load.image.area <- function(picture, dataBright = "bright", representation,
         data <- (data - dataCenter) / boxSize
 
         if (varEst == "value") {
-          estResult <- lengthest(data, error = error, var = var,
+          estResult <- lengthest(data, error = error, sd = sqrt(var),
             conf.level = conf.level)
         } else {
-          estResult <- lengthest(data, error = error, var.est = varEst,
+          estResult <- lengthest(data, error = error, sd.est = varEst,
             conf.level = conf.level)
         }
 
@@ -479,10 +486,10 @@ load.image.area <- function(picture, dataBright = "bright", representation,
           data <- distancesVector - dataCenter
 
           if (varEst == "value") {
-            estResult <- lengthest(data, error = error, var = var,
+            estResult <- lengthest(data, error = error, sd = sqrt(var),
               conf.level = conf.level)
           } else {
-            estResult <- lengthest(data, error = error, var.est = varEst,
+            estResult <- lengthest(data, error = error, sd.est = varEst,
               conf.level = conf.level)
           }
 
@@ -528,10 +535,10 @@ load.image.area <- function(picture, dataBright = "bright", representation,
         data <- distancesVector - dataCenter
 
         if (varEst == "value") {
-          estResult <- lengthest(data, error = error, var = var,
+          estResult <- lengthest(data, error = error, sd = sqrt(var),
             conf.level = conf.level)
         } else {
-          estResult <- lengthest(data, error = error, var.est = varEst,
+          estResult <- lengthest(data, error = error, sd.est = varEst,
             conf.level = conf.level)
         }
 
@@ -604,19 +611,25 @@ load.image.area <- function(picture, dataBright = "bright", representation,
 
     percArea <- circleArea / (height * width ) * 100
 
-    output <- paste("Levels of grey: ", levelsOfGray,
+    if (verbose) {
+      output <- paste("Levels of grey: ", levelsOfGray,
       ", Box size: ", boxSize,
       ", Line thickness: ", thickness,
       ", Error distribution: ", error,
-      "<br><strong>Area</strong>: ", circleArea, " pixels (",
+      "<br><strong>Area</strong>: ", round(circleArea, 2), " pixels (",
       round(percArea, 2), "% of the image area)<br>",
       "Circle center (", round(circle[1]), ", ", round(circle[2]), "), ",
       "radius: ", round(circle[3]),
       "<br>Parallel: ", parallel, " Slicing: ", slicing, " Time: ", evalTime,
       sep = "")
+    } else {
+      output <- paste(round(circle[1]), " ", round(circle[2]), " ",
+        round(circle[1]+circle[3]), " ", round(circle[2]), " ",
+        round(circle[1]), " ", round(circle[2]+circle[3]), sep = " ")
+    }
 
     # show circle as ellipse for drawing purposes
-    ellipseArea <- circleArea
+    ellipseArea <- round(circleArea, 2)
     ellipseDirectG <- c(circle[1], circle[2], circle[3], circle[3], 0)
   }
 
@@ -743,10 +756,10 @@ areaest <- function(data,
         data <- distancesVector - dataCenter
 
         if (!is.null(var)) {
-          estResult <- lengthest(data, error = error, var = var,
+          estResult <- lengthest(data, error = error, sd = sqrt(var),
             conf.level = conf.level)
         } else {
-          estResult <- lengthest(data, error = error, var.est = var.est,
+          estResult <- lengthest(data, error = error, sd.est = var.est,
             conf.level = conf.level)
         }
 
@@ -775,10 +788,10 @@ areaest <- function(data,
         data <- distancesVector - dataCenter
 
         if (!is.null(var)) {
-          estResult <- lengthest(data, error = error, var = var,
+          estResult <- lengthest(data, error = error, sd = sqrt(var),
             conf.level = conf.level)
         } else {
-          estResult <- lengthest(data, error = error, var.est = var.est,
+          estResult <- lengthest(data, error = error, sd.est = var.est,
             conf.level = conf.level)
         }
 
@@ -810,10 +823,10 @@ areaest <- function(data,
         data <- distancesVector - dataCenter
 
         if (!is.null(var)) {
-          estResult <- lengthest(data, error = error, var = var,
+          estResult <- lengthest(data, error = error, sd = sqrt(var),
             conf.level = conf.level)
         } else {
-          estResult <- lengthest(data, error = error, var.est = var.est,
+          estResult <- lengthest(data, error = error, sd.est = var.est,
             conf.level = conf.level)
         }
 
@@ -843,10 +856,10 @@ areaest <- function(data,
         data <- distancesVector - dataCenter
 
         if (!is.null(var)) {
-          estResult <- lengthest(data, error = error, var = var,
+          estResult <- lengthest(data, error = error, sd = sqrt(var),
             conf.level = conf.level)
         } else {
-          estResult <- lengthest(data, error = error, var.est = var.est,
+          estResult <- lengthest(data, error = error, sd.est = var.est,
             conf.level = conf.level)
         }
 
@@ -894,10 +907,10 @@ areaest <- function(data,
           data <- distancesVector - dataCenter
 
           if (!is.null(var)) {
-            estResult <- lengthest(data, error = error, var = var,
+            estResult <- lengthest(data, error = error, sd = sqrt(var),
               conf.level = conf.level)
           } else {
-            estResult <- lengthest(data, error = error, var.est = var.est,
+            estResult <- lengthest(data, error = error, sd.est = var.est,
               conf.level = conf.level)
           }
 
@@ -938,10 +951,10 @@ areaest <- function(data,
         data <- distancesVector - dataCenter
 
         if (!is.null(var)) {
-          estResult <- lengthest(data, error = error, var = var,
+          estResult <- lengthest(data, error = error, sd = sqrt(var),
             conf.level = conf.level)
         } else {
-          estResult <- lengthest(data, error = error, var.est = var.est,
+          estResult <- lengthest(data, error = error, sd.est = var.est,
             conf.level = conf.level)
         }
 
@@ -1005,7 +1018,7 @@ areaest <- function(data,
   }
 
   return (list(
-    "area" = ellipseArea,
+    "area" = round(ellipseArea, 2),
     "points" = ellipsePointsClean,
     "semiaxes" = c(ellipseDirectG[3], ellipseDirectG[4])
   ))

@@ -4,27 +4,28 @@
 \alias{lengthtest}
 \title{Test for uniform distribution width.}
 \usage{
-lengthtest(x, error = c("laplace", "gauss", "student"),
-  alternative = c("two.sided", "greater", "less"), var = NULL,
-  null.a = NULL, var.est = c("MM", "ML"), conf.level = 0.95)
+lengthtest(x, error = c("laplace", "gauss", "t1", "t2", "t3", "t4",
+  "t5"), alternative = c("two.sided", "greater", "less"), sd = NULL,
+  null.a = NULL, sd.est = c("MM", "ML"), conf.level = 0.95)
 }
 \arguments{
 \item{x}{Vector of input data}
 
 \item{error}{A character string specifying the error distribution. Must be
-one of "laplace", "gauss" or "student". Can be abbreviated.}
+one of "laplace", "gauss", "t1", "t2", "t3", "t4", "t5". Can be
+abbreviated.}
 
 \item{alternative}{A character string specifying the alternative hypothesis,
 must be one of "two.sided", "greater" or "less". Can be abbreviated.}
 
-\item{var}{Explicit error variance. Needs to be given if \code{var.est} is
-not given.}
+\item{sd}{Explicit error standard deviation. Needs to be given if
+\code{var.sd} is not given.}
 
 \item{null.a}{Specified null value being tested.}
 
-\item{var.est}{A character string specifying the method of error variance
-estimation. Must be given if \code{var} is not given. Can be "MM" (Method
-of Moments) or "ML" (Maximum Likelihood).}
+\item{sd.est}{A character string specifying the method of error standard
+deviation estimation. Must be given if \code{sd} is not given. Can be "MM"
+(Method of Moments) or "ML" (Maximum Likelihood).}
 
 \item{conf.level}{Confidence level of the confidence interval.}
 }
@@ -34,7 +35,7 @@ List containing:
     \item error.type: A character string describing the type of the
       error distribution,
     \item radius: Estimated half-width of uniform distribution,
-    \item var.error: Error variance, estimated or given,
+    \item sd.error: Error standard deviation, estimated or given,
     \item conf.level: Confidence level of the confidence interval,
     \item alternative: A character string describing the
       alternative hypothesis,
@@ -51,7 +52,7 @@ List containing:
 Function \code{lengthtest()} tests the hypothesized uniform domain width
 against two-sided or one-sided alternatives from data contaminated with
 additive error. The additive error can be chosen as Laplace, Gauss or
-scaled Student distribution with 5 degrees of freedom.
+scaled Student distribution with 1 - 5 degrees of freedom.
 }
 \examples{
 # generate uniform data with additive error and run a hypothesis testing on it
@@ -59,6 +60,6 @@ sample_1 <- runif(1000, -1, 1)
 sample_2 <- rnorm(1000, 0, 0.1)
 sample <- sample_1 + sample_2
 out <- lengthtest(x = sample, error = "gauss", alternative = "greater",
-                  var.est = "MM", null.a = 0.997, conf.level = 0.95)
+                  sd.est = "MM", null.a = 0.997, conf.level = 0.95)
 
 }

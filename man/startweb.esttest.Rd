@@ -48,7 +48,7 @@ Parameters that can be set on the web page are as follows:
  \strong{Estimation parameters}
  \describe{
    \item{Error distribution}{The type of the error distribution. Can be
-     Gauss, Laplace or Student.}
+     Gauss, Laplace, T1, T2, T3, T4 or T5 (Student).}
    \item{Error standard deviation}{Estimation method for the error
      standard deviation. Can be Maximum Likelihood (ML) or the Method of
      Moments. If one does not want to estimate the deviation but to
